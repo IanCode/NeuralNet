@@ -52,8 +52,8 @@ def main():
     #take training directory as a command line argument
     train_data_dir = sys.argv[1]
     validation_data_dir = 'validation'
-    nb_train_samples = 12500*2
-    nb_validation_samples = 5000*2
+    nb_train_samples = 12500
+    nb_validation_samples = 5000
     epochs = 50
     batch_size = 16
 
@@ -64,23 +64,25 @@ def main():
 
     model = Sequential()
     model.add(Conv2D(32, (3, 3), input_shape=input_shape))
-    model.add(Activation('relu'))
+    model.add(Activation('elu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
 
     model.add(Conv2D(32, (3, 3)))
-    model.add(Activation('relu'))
+    model.add(Activation('elu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
 
     model.add(Conv2D(64, (3, 3)))
-    model.add(Activation('relu'))
+    model.add(Activation('elu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
 
     model.add(Flatten())
     model.add(Dense(64))
-    model.add(Activation('relu'))
+    model.add(Activation('elu'))
     model.add(Dropout(0.5))
     model.add(Dense(1))
     model.add(Activation('sigmoid'))
+    #model.add(Dropout(0.5))
+    #model.add(Dense(1, activation='softmax'))
 
     model.compile(loss='binary_crossentropy',
                   optimizer='rmsprop',
