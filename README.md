@@ -1,7 +1,7 @@
 # NeuralNet
 Image classifier written in python
 
-# Recommended Packages
+## Recommended Packages
 Anaconda: https://www.anaconda.com/download/
 matplotlib
 
