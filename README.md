@@ -2,18 +2,20 @@
 Image classifier written in python
 
 ## Recommended Packages
-Anaconda: https://www.anaconda.com/download/
-matplotlib
+- Anaconda: https://www.anaconda.com/download/
+- matplotlib
 
-## Required Packages:
-scipy with numpy
+## Required Packages
+- scipy with numpy
+- keras
+- tensorflow
 
-## Notes on Activation Functions
+### Notes on Activation Functions
 #### RELU
-Quick to calculate
-'sigmoid that doesn't saturate on the high end'
-trained more easily, even in a deep network (viable deep networks)
-can have dying relu problem
+- Quick to calculate
+- 'sigmoid that doesn't saturate on the high end'
+- trained more easily, even in a deep network (viable deep networks)
+- can have dying relu problem
 - can get locked into returning 0 always
 
 #### Leaky RELU
@@ -48,3 +50,20 @@ can have dying relu problem
 - in some ways, we are actually training a massive ensemble of networks
 - most libraries support Dropout
 - increase accuracy with very little cost, can turn on by adding an argument to one of the functions
+
+### Convolutional Neural Networks
+- Uses multidimensional representations of matrices called tensors
+##### Matrix Convolution
+- flip second matrix around
+- take dot product of two matrices
+- but actually wait no the second is gonna be smaller than the first
+- this matrix is called the kernel
+- slide kernel over first matrix, compare in many different places
+- at each position, take dot product, and put all those dot products into one matrix
+- convolution matrix is usually an odd sized square
+
+##### Convolutional Network Layers
+- create whole layers of neural network based on matrix convolution
+- kernels of these layers are analagous to neurons in a neural network
+- then feed the output of that into traditional layers of a fully connected neural net
+- 
