@@ -69,4 +69,4 @@ Image classifier written in python
 - create whole layers of neural network based on matrix convolution
 - kernels of these layers are analagous to neurons in a neural network
 - then feed the output of that into traditional layers of a fully connected neural net
-- 
+-
