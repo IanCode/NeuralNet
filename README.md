@@ -69,4 +69,16 @@ Image classifier written in python
 - create whole layers of neural network based on matrix convolution
 - kernels of these layers are analagous to neurons in a neural network
 - then feed the output of that into traditional layers of a fully connected neural net
--
+
+## References
+`Building powerful image classification models using very little data`
+https://blog.keras.io/building-powerful-image-classification-models-using-very-little-data.html
+`Tensorflow Tutorial`
+http://cv-tricks.com/tensorflow-tutorial/training-convolutional-neural-network-for-image-classification/
+`VGG16 model for Keras`
+https://gist.github.com/baraldilorenzo/07d7802847aaad0a35d3
+`Very Deep Convolutional Networks for Large-Scale Image Recognition`
+https://arxiv.org/abs/1409.1556
+
+## Data
+https://www.kaggle.com/c/dogs-vs-cats/data
