@@ -20,6 +20,7 @@ import numpy
 import theano
 import glob
 import os
+import cv2
 import numpy as np
 from PIL import Image
 from keras.layers import Conv2D, MaxPooling2D
@@ -42,26 +43,29 @@ def main():
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
 
+    print(dir_path)
     for filename in os.listdir(cats_and_dogs):
-    	if filename[0] == 'd':
+        print(os.path.join(dir_path, cats_and_dogs, filename))
+        if filename[0] == 'd':
             y_train.append(0)
             path = os.path.join(dir_path, cats_and_dogs, filename)
-            img = Image.open(path)
+            img = cv2.imread(path)
             arr = np.array(img)
             if len(arr) == 2:
-                np.append(arr, 3)
+                np.append(arr, 3)   
             x_train.append(arr)
-    	elif filename[0] == 'c':
+        elif filename[0] == 'c':
             y_train.append(1)
             path = os.path.join(dir_path, cats_and_dogs, filename)
-            img = Image.open(path)
+            img = cv2.imread(path)
             arr = np.array(img)
             if len(arr) == 2:
                 np.append(arr, 3)
-            #print(arr.shape)
+            print("doing it")
+            print(arr.shape)
             x_train.append(arr)
 
-    #training_images = np.asarray(x_train)
+    training_images = np.array(x_train)
     training_labels = np.array(y_train)
 
 
@@ -105,12 +109,9 @@ def main():
         cats_and_dogs,  # this is the target directory
         target_size=(height, width),  # all images will be resized to 150x150
         batch_size=batch_size,
-        class_mode='binary')  # since we use binary_crossentropy loss, we need binary labels
+        class_mode='binary') # since we use binary_crossentropy loss, we need binary labels
 
-    train_generator = trainImgGen.flow(
-        x_train,
-        y=training_labels,
-        batch_size=batch_size)
+    train_generator = trainImgGen.flow(training_images, y=training_labels, batch_size=batch_size)
 
     model.fit_generator(
         train_generator,
