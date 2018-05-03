@@ -45,25 +45,22 @@ def main():
 
     print(dir_path)
     for filename in os.listdir(cats_and_dogs):
-        print(os.path.join(dir_path, cats_and_dogs, filename))
         if filename[0] == 'd':
-            y_train.append(0)
+            y_train.append((0,1))
             path = os.path.join(dir_path, cats_and_dogs, filename)
             img = cv2.imread(path)
-            arr = np.array(img)
+            '''arr = np.array(img)
             if len(arr) == 2:
-                np.append(arr, 3)
-            x_train.append(arr)
+                np.append(arr, 3)'''
+            x_train.append(img)
         elif filename[0] == 'c':
-            y_train.append(1)
+            y_train.append((1,0))
             path = os.path.join(dir_path, cats_and_dogs, filename)
             img = cv2.imread(path)
-            arr = np.array(img)
+            '''arr = np.array(img)
             if len(arr) == 2:
-                np.append(arr, 3)
-            print("doing it")
-            print(arr.shape)
-            x_train.append(arr)
+                np.append(arr, 3)'''
+            x_train.append(img)
 
     training_images = np.array(x_train)
     training_labels = np.array(y_train)
