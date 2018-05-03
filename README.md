@@ -53,6 +53,7 @@ Image classifier written in python
 
 ### Convolutional Neural Networks
 - Uses multidimensional representations of matrices called tensors
+
 ##### Matrix Convolution
 - flip second matrix around
 - take dot product of two matrices
@@ -61,6 +62,12 @@ Image classifier written in python
 - slide kernel over first matrix, compare in many different places
 - at each position, take dot product, and put all those dot products into one matrix
 - convolution matrix is usually an odd sized square
+- convoluting by `n x n` kernel results in a size reduction of `n - 1`
+- *eg.*
+	- `4 x 4` matrix
+	- `2 x 2` kernel (convolution matrix) 
+	- results in `3 x 3` matrix
+
 
 ##### Convolutional Network Layers
 - create whole layers of neural network based on matrix convolution
