@@ -1,0 +1,209 @@
+nearest neighbor
+- memorize all training data
+- on test data, match each image with most similar image
+K-nearest neighbor
+- take majority vote from each of K closest points
+- choose different values of K
+	- Problems (not used on images): 
+		- slow at test time
+		- euclidean and manhattan distance don't do well with actual differences in images
+		- points needed grows exponentially with the dimension of the space
+
+Hyperperameters
+- Split into train, validation, and test
+- evaluate on test
+N-fold cross validation: 
+- split into many folds
+- switch validation set on each fold
+
+Linear Classifier: 
+- learns one template for each category
+- f(x,W) = Wx + b
+- uses dot product between W and x
+	- W is a weight matrix or parameters (2 categories, 10 categories, etc.)
+	- x is an image, or the data
+	- gives out scores, a larger score is more of a cat or more of a dog, etc.
+	- only W needed at test time, allows it to run faster
+	- b is a bias vector, which is the same dimension as W and gives different weights for different categories
+	- output vector is same dimension as b
+
+Loss Function: 
+- tells us how good our current classifier is 
+- squared loss: helps differentiate between different kinds of mistakes
+	- being a little wrong vs being a lot wrong
+- Occam's Razor: 
+	- regularization
+		- penalizes complexity of the model
+	- new term to loss function, 'regularization term', model should be simple, so it works on test data
+	- "Among competing hypotheses, the simplest is the best." because that is often the easiest to generalize to other problems
+- Other Regularization Functions:
+	- L2 regularization
+	- L1 regularization
+	- Elastic net (L1 + L2)
+	- Max Norm regularization
+	- Dropout
+	- Batch normalization
+	- Stochastic depth
+	- Softmax
+		- scores are unnormalized log probabilities of the classes
+Overview: 
+- in many applications, the decision of regularization function is trivial
+- 1. Linear classifier computes scores
+- 2. SVM or loss function to see how bad predictions are compared to targets
+- 3. Augment loss with regularization term
+
+Gradient:
+- always use analytic gradient, but check implementation with numerical gradient
+- Gradient Descent: 
+	- 1. initialize w as random
+	- 2. while True:
+			weights_grad = evaluate_gradient(loss_fun, data, weights)
+			weights += - step_size * weights_grad 
+	- take small step in the direction of -gradient
+	- repeat forever
+	- step_size = learning_rate: important hyperparameter
+		- Update rules: 
+			- fancier gradient descent algorithms
+			- idea is that basic gradient descent gets updated a lot, and so yeah whatever. 
+			- same basic algorithm of trying to go downhill at every time step
+	- Stochastic Gradient Descent	
+		- why? 
+			- when N is large computing Loss is expensive
+			- gradient requires iterating over entire dataset
+		- how? 
+			- rather than compute loss of entire training set, sample small set of training samples (minibatch)
+				- 32, 64, 128 by convention
+			- use minibatch to compute estimate of true gradient
+			- monte carlo estimate of true value
+
+				while true:
+					data_batch = sample_training_data(data, 256)
+					weights_grad = evaluate_gradient(loss_fun, data_batch, weights)
+					weights += - step_size * weights_grad
+
+Convolutional Neural Networks: 
+- Fully Connected Layer
+	- 32 x 32 x 3 image
+	- stretch to 3072 x 1 input layer 
+	- multiply by 10 x 3072 weights layer W
+	- 1 x 10 activation layer 
+		- each column is a dot product of row of W and input (3072 dim dot product)
+- Convolutional Layer
+	- keep structure of 32 x 32 x 3 image
+	- 5 x 5 x 3 filter
+	- slide of 1 gets all locations
+	- multiple filters
+	- new 'activation map' of 28 x 28 x 3 that can take an activation function
+		- usually some pooling layers too
+	- filters at earlier layers: 
+		- low level features 
+		- then mid level features
+		- then high level features
+		- then linearly separable classifier
+	- one filter -> one activation map
+	- Output Size
+		- Example: 
+			- 7 x 7 input
+			- 3 x 3 filter
+			- stride of 1
+				- 5 x 5 output
+			- stride of 2
+				- 3 x 3 output
+			- stride of 3
+				- doesn't fit!
+				- don't do that if it leads to asymmetric outputs
+		- output_size = (N - F)/stride + 1
+	- Zero Padding
+		- pad the border with zeros
+		- incorporate padding into formula (inrease N size)
+	- Why zero pad? 
+		- quickly shrink size of the outputs that we have
+		- Example: 
+			- 32 x 32 input with 5 x 5 filters
+				- activation maps shrink, lose edge information
+				- 32 -> 28 -> 24 ...
+		- Example: 
+			- 32 x 32 x 3 input volume
+			- 10 5 x 5 filters with stride 1, pad 2
+			- output_volume = (32+2*2-5)/1 + 1 = 32 spatially, so 32 x 32 x 10
+				- 10 because 10 filters
+		- Example: 
+			- input volume: 32 x 32 x 3
+			- 10 5 x 5 filters with stride 1, pad 2
+			- number of parameters in this layer? 
+			- 5*5*3+1 = 76
+	- Fully Connected vs Convolutional
+		- FC: each neuron looks at entire input region
+		- Conv: each neuron looks at output section from filter
+	- Pooling Layer
+		- makes representations smaller and more manageable
+		- downsamples input volume, but doesn't change depth
+		- Max Pooling: 
+			- Pooling layer with filter size and stride
+			- instead of doing dot products, just take the max value of that region
+			- in pooling layers, it is more common to have the stride so there is no overlap (multiple of same max for regions)
+			- recently, people have used stride more to do the downsampling
+			- Common Settings: 
+				- F = 2, S = 2
+				- F = 3, S = 2
+		- How much pooling is enough? 
+			- don't pool too much
+			- trade off
+	- Common Format: 
+		- [(CONV-RELU)*N - POOL?]*M-(FC-RELU)*K,SOFTMAX
+			- where N is usually up to 5, M is large, 0 <= K <= 2
+			- softmax at the end for class scores
+			- few fully connected layers at the end
+	- Batch Normalization
+		- keep activations in a gaussian range
+		- force them to be that way
+		- usually inserted after fully connected or convolutional layers
+		- multiplying by W can have bad scaling effect
+		- this undoes this effect
+			- scaling by inputs connected to each neuron
+			- with convolutional layers, we normalize across all training examples and spacial locations
+			- one mean and one standard deviation per activation map
+		- also includes scaling and shifting
+	- Babysitting the Learning Process
+		- Step 1: preprocess the data
+		- step 2: choose the architecture
+		- check that the loss is reasonable
+		- make sure that you can overfit a very small portion of data
+			- get very good loss on this set
+		- learning rate ranges: between 1e^-3 and 1e^-5
+		- Cross Validation Strategy: 
+			- coarse -> fine cross-validation in stages
+				- First Stage: 
+					- only a few epochs to get rough idea of which params work
+				- Second Stage: 
+					- longer running time, finer search ... repeat as necessary
+			- how to detect explosions in the solver: 
+				- if cost is ever > 3 * the original cost, break
+			- better to optimize in log space because the learning rate is multiplying learning update
+			- make sure learning rate isn't too high so you explore the entire space
+		- Monitor the Loss Curve: 
+			- skyrocketing: very high learning rate
+			- slow decline: low learning rate
+			- downward spike then horizontal: high learning rate
+			- steep curve then continuing to go down: good learning rate
+			- flat for a while then goes down: bad initialization
+		- Monitor Validation Accuracy
+			- Big gap between training and validation accuracy: overfitting
+			- no gap: increase model capacity
+	- Problems with SGD: 
+		- what if loss changes quickly in one dimension and slowly in another? 
+		- local minima (saddle points more common in high dimensions)
+		- noise in gradient estimates cause it to slowly approach minimum
+	- SGD with Momentum: 
+		- add velocity vector to SGD equation
+		- step in direction of velocity instead of gradient
+		- helps avoid local minima
+		- helps avoid saddle points
+
+
+
+
+
+
+
+
