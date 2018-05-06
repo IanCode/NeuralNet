@@ -79,13 +79,16 @@ def main():
     model = Sequential()
     #start by making 3x2x2 convolutional layer
 
-    model.add(Conv2D(64, (5, 5), activation='relu',  input_shape=(width, height, 3), strides=2))
+    model.add(Conv2D(64, (3, 3), input_shape=(width, height, 3), strides=2))
+    model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
 
-    model.add(Conv2D(32, (3, 3), activation='relu'))
+    model.add(Conv2D(32, (5, 5)))
+    model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
 
-    model.add(Conv2D(32, (3, 3), activation='relu'))
+    model.add(Conv2D(32, (5, 5)))
+    model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
 
     '''model.add(Conv2D(128, (3, 3), activation='relu'))
@@ -99,19 +102,24 @@ def main():
     #Flatten before fully connected layers
     model.add(Flatten())
 
-    model.add(Dense(256, activation='relu'))
+    model.add(Dense(256))
+    model.add(Activation('relu'))
     model.add(Dropout(0.5))
 
-    model.add(Dense(128, activation='relu'))
+    model.add(Dense(128))
+    model.add(Activation('relu'))
     model.add(Dropout(0.5))
 
-    model.add(Dense(128, activation='relu'))
+    model.add(Dense(128))
+    model.add(Activation('relu'))
     model.add(Dropout(0.5))
 
-    model.add(Dense(64, activation='relu'))
+    model.add(Dense(64))
+    model.add(Activation('relu'))
     model.add(Dropout(0.5))
 
-    model.add(Dense(64, activation='relu'))
+    model.add(Dense(64))
+    model.add(Activation('relu'))
     model.add(Dropout(0.5))
     #it appears that sigmoid is more effective than softmax
     #for two-class logistic regression
