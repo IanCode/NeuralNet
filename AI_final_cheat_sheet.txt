@@ -4,7 +4,7 @@ nearest neighbor
 K-nearest neighbor
 - take majority vote from each of K closest points
 - choose different values of K
-	- Problems (not used on images): 
+	- Problems (not used on images):
 		- slow at test time
 		- euclidean and manhattan distance don't do well with actual differences in images
 		- points needed grows exponentially with the dimension of the space
@@ -12,11 +12,11 @@ K-nearest neighbor
 Hyperperameters
 - Split into train, validation, and test
 - evaluate on test
-N-fold cross validation: 
+N-fold cross validation:
 - split into many folds
 - switch validation set on each fold
 
-Linear Classifier: 
+Linear Classifier:
 - learns one template for each category
 - f(x,W) = Wx + b
 - uses dot product between W and x
@@ -27,11 +27,11 @@ Linear Classifier:
 	- b is a bias vector, which is the same dimension as W and gives different weights for different categories
 	- output vector is same dimension as b
 
-Loss Function: 
-- tells us how good our current classifier is 
+Loss Function:
+- tells us how good our current classifier is
 - squared loss: helps differentiate between different kinds of mistakes
 	- being a little wrong vs being a lot wrong
-- Occam's Razor: 
+- Occam's Razor:
 	- regularization
 		- penalizes complexity of the model
 	- new term to loss function, 'regularization term', model should be simple, so it works on test data
@@ -46,7 +46,7 @@ Loss Function:
 	- Stochastic depth
 	- Softmax
 		- scores are unnormalized log probabilities of the classes
-Overview: 
+Overview:
 - in many applications, the decision of regularization function is trivial
 - 1. Linear classifier computes scores
 - 2. SVM or loss function to see how bad predictions are compared to targets
@@ -54,23 +54,23 @@ Overview:
 
 Gradient:
 - always use analytic gradient, but check implementation with numerical gradient
-- Gradient Descent: 
+- Gradient Descent:
 	- 1. initialize w as random
 	- 2. while True:
 			weights_grad = evaluate_gradient(loss_fun, data, weights)
-			weights += - step_size * weights_grad 
+			weights += - step_size * weights_grad
 	- take small step in the direction of -gradient
 	- repeat forever
 	- step_size = learning_rate: important hyperparameter
-		- Update rules: 
+		- Update rules:
 			- fancier gradient descent algorithms
-			- idea is that basic gradient descent gets updated a lot, and so yeah whatever. 
+			- idea is that basic gradient descent gets updated a lot, and so yeah whatever.
 			- same basic algorithm of trying to go downhill at every time step
-	- Stochastic Gradient Descent	
-		- why? 
+	- Stochastic Gradient Descent
+		- why?
 			- when N is large computing Loss is expensive
 			- gradient requires iterating over entire dataset
-		- how? 
+		- how?
 			- rather than compute loss of entire training set, sample small set of training samples (minibatch)
 				- 32, 64, 128 by convention
 			- use minibatch to compute estimate of true gradient
@@ -81,12 +81,12 @@ Gradient:
 					weights_grad = evaluate_gradient(loss_fun, data_batch, weights)
 					weights += - step_size * weights_grad
 
-Convolutional Neural Networks: 
+Convolutional Neural Networks:
 - Fully Connected Layer
 	- 32 x 32 x 3 image
-	- stretch to 3072 x 1 input layer 
+	- stretch to 3072 x 1 input layer
 	- multiply by 10 x 3072 weights layer W
-	- 1 x 10 activation layer 
+	- 1 x 10 activation layer
 		- each column is a dot product of row of W and input (3072 dim dot product)
 - Convolutional Layer
 	- keep structure of 32 x 32 x 3 image
@@ -95,14 +95,14 @@ Convolutional Neural Networks:
 	- multiple filters
 	- new 'activation map' of 28 x 28 x 3 that can take an activation function
 		- usually some pooling layers too
-	- filters at earlier layers: 
-		- low level features 
+	- filters at earlier layers:
+		- low level features
 		- then mid level features
 		- then high level features
 		- then linearly separable classifier
 	- one filter -> one activation map
 	- Output Size
-		- Example: 
+		- Example:
 			- 7 x 7 input
 			- 3 x 3 filter
 			- stride of 1
@@ -116,21 +116,21 @@ Convolutional Neural Networks:
 	- Zero Padding
 		- pad the border with zeros
 		- incorporate padding into formula (inrease N size)
-	- Why zero pad? 
+	- Why zero pad?
 		- quickly shrink size of the outputs that we have
-		- Example: 
+		- Example:
 			- 32 x 32 input with 5 x 5 filters
 				- activation maps shrink, lose edge information
 				- 32 -> 28 -> 24 ...
-		- Example: 
+		- Example:
 			- 32 x 32 x 3 input volume
 			- 10 5 x 5 filters with stride 1, pad 2
 			- output_volume = (32+2*2-5)/1 + 1 = 32 spatially, so 32 x 32 x 10
 				- 10 because 10 filters
-		- Example: 
+		- Example:
 			- input volume: 32 x 32 x 3
 			- 10 5 x 5 filters with stride 1, pad 2
-			- number of parameters in this layer? 
+			- number of parameters in this layer?
 			- 5*5*3+1 = 76
 	- Fully Connected vs Convolutional
 		- FC: each neuron looks at entire input region
@@ -138,18 +138,18 @@ Convolutional Neural Networks:
 	- Pooling Layer
 		- makes representations smaller and more manageable
 		- downsamples input volume, but doesn't change depth
-		- Max Pooling: 
+		- Max Pooling:
 			- Pooling layer with filter size and stride
 			- instead of doing dot products, just take the max value of that region
 			- in pooling layers, it is more common to have the stride so there is no overlap (multiple of same max for regions)
 			- recently, people have used stride more to do the downsampling
-			- Common Settings: 
+			- Common Settings:
 				- F = 2, S = 2
 				- F = 3, S = 2
-		- How much pooling is enough? 
+		- How much pooling is enough?
 			- don't pool too much
 			- trade off
-	- Common Format: 
+	- Common Format:
 		- [(CONV-RELU)*N - POOL?]*M-(FC-RELU)*K,SOFTMAX
 			- where N is usually up to 5, M is large, 0 <= K <= 2
 			- softmax at the end for class scores
@@ -171,17 +171,17 @@ Convolutional Neural Networks:
 		- make sure that you can overfit a very small portion of data
 			- get very good loss on this set
 		- learning rate ranges: between 1e^-3 and 1e^-5
-		- Cross Validation Strategy: 
+		- Cross Validation Strategy:
 			- coarse -> fine cross-validation in stages
-				- First Stage: 
+				- First Stage:
 					- only a few epochs to get rough idea of which params work
-				- Second Stage: 
+				- Second Stage:
 					- longer running time, finer search ... repeat as necessary
-			- how to detect explosions in the solver: 
+			- how to detect explosions in the solver:
 				- if cost is ever > 3 * the original cost, break
 			- better to optimize in log space because the learning rate is multiplying learning update
 			- make sure learning rate isn't too high so you explore the entire space
-		- Monitor the Loss Curve: 
+		- Monitor the Loss Curve:
 			- skyrocketing: very high learning rate
 			- slow decline: low learning rate
 			- downward spike then horizontal: high learning rate
@@ -190,20 +190,15 @@ Convolutional Neural Networks:
 		- Monitor Validation Accuracy
 			- Big gap between training and validation accuracy: overfitting
 			- no gap: increase model capacity
-	- Problems with SGD: 
-		- what if loss changes quickly in one dimension and slowly in another? 
+	- Problems with SGD:
+		- what if loss changes quickly in one dimension and slowly in another?
 		- local minima (saddle points more common in high dimensions)
 		- noise in gradient estimates cause it to slowly approach minimum
-	- SGD with Momentum: 
+	- SGD with Momentum:
 		- add velocity vector to SGD equation
 		- step in direction of velocity instead of gradient
 		- helps avoid local minima
 		- helps avoid saddle points
-
-
-
-
-
-
-
-
+	- Adagrad:
+		- during optimization, keep a running sum of all squared gradients
+		- during training, keep adding squared gradients to

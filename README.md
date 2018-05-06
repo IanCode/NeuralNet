@@ -1,6 +1,44 @@
 # NeuralNet
 Image classifier written in python
 
+## Implementation Details
+### Layers
+Conv2d 64, filter of 3 x 3, stride of 1
+output_size = (64 - 3)/1 + 1
+output_size = 62
+Conv2d 64, filter of 2 x 2, stride of 2
+output_size = (N - F)/stride + 1
+output_size = (64 - 2)/2 + 1
+output_size = 62/2 + 1
+output_size = 32
+
+### General Layout Notes
+- Fully Connected vs Convolutional
+	- FC: each neuron looks at entire input region
+	- Conv: each neuron looks at output section from filter
+- Pooling Layer
+	- makes representations smaller and more manageable
+	- downsamples input volume, but doesn't change depth
+	- Max Pooling:
+		- Pooling layer with filter size and stride
+		- instead of doing dot products, just take the max value of that region
+		- in pooling layers, it is more common to have the stride so there is no overlap (multiple of same max for regions)
+		- recently, people have used stride more to do the downsampling
+		- Common Settings:
+			- F = 2, S = 2
+			- F = 3, S = 2
+	- How much pooling is enough?
+		- don't pool too much
+		- trade off
+- Common Format:
+	- [(CONV-RELU)\*N - POOL?]\*M-(FC-RELU)\*K,SOFTMAX
+		- conv-relu layer for some N number of steps followed by a pooling layer
+		- that whole thing repeated some M number of times
+		- followed by fully connected RELU layers some K number of times 
+		- where N is usually up to 5, M is large, 0 <= K <= 2
+		- softmax at the end for class scores
+		- few fully connected layers at the end
+
 ## Recommended Packages
 - Anaconda: https://www.anaconda.com/download/
 - matplotlib

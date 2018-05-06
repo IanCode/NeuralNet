@@ -1,22 +1,28 @@
 '''
 References:
-"Building powerful image classification models using very little data"
-https://blog.keras.io/building-powerful-image-classification-models-using-very-little-data.html
 "Tensorflow Tutorial"
 http://cv-tricks.com/tensorflow-tutorial/training-convolutional-neural-network-for-image-classification/
-"VGG16 model for Keras"
-https://gist.github.com/baraldilorenzo/07d7802847aaad0a35d3
+"Keras Tutorial: The Ultimate Beginner's Guide to Deep Learning in Python"
+https://elitedatascience.com/keras-tutorial-deep-learning-in-python
 "Very Deep Convolutional Networks for Large-Scale Image Recognition"
 https://arxiv.org/abs/1409.1556
+"Stanford University: Introduction to Convolutional Neural Networks for Visual Recognition"
+http://cs231n.stanford.edu/slides/2017/
 
 Data:
 https://www.kaggle.com/c/dogs-vs-cats/data
 
-
+Ian White 2018
 '''
+
 import sys
 import numpy
 import theano
+import glob
+import os
+import cv2
+import numpy as np
+from PIL import Image
 from keras.layers import Conv2D, MaxPooling2D
 from keras.models import Sequential
 from keras.preprocessing.image import ImageDataGenerator
@@ -26,119 +32,90 @@ from keras import backend
 def main():
     print(numpy.__version__)
     print(theano.__version__)
-
     width, height = 100, 100
+    x_train = []
+    y_train = []
+    #take training directory  and output file name as command line arguments
+    cats_and_dogs = sys.argv[1]
+    network_name = sys.argv[2]
 
-    #take training directory as a command line argument
-    train_data_dir = sys.argv[1]
-    nb_train_samples = 7000
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+
+    print(dir_path)
+    for filename in os.listdir(cats_and_dogs):
+        if filename[0] == 'd':
+            y_train.append((0,1))
+            path = os.path.join(dir_path, cats_and_dogs, filename)
+            img = cv2.imread(path)
+            '''arr = np.array(img)
+            if len(arr) == 2:
+                np.append(arr, 3)'''
+            x_train.append(img)
+        elif filename[0] == 'c':
+            y_train.append((1,0))
+            path = os.path.join(dir_path, cats_and_dogs, filename)
+            img = cv2.imread(path)
+            '''arr = np.array(img)
+            if len(arr) == 2:
+                np.append(arr, 3)'''
+            x_train.append(img)
+
+    training_images = np.array(x_train)
+    training_labels = np.array(y_train)
+
+
+    num_train_samples = 25000
     epochs = 50
-    batch_size = 16
+    batch_size = height+width
 
-    '''if backend.image_data_format() == 'channels_first':
-        input_shape = (3, img_width, img_height)
-    else:
-        input_shape = (img_width, img_height, 3)'''
-#########################################################
-'''    model = Sequential()
-    model.add(ZeroPadding2D((1,1),input_shape=(3,224,224)))
-    model.add(Conv2D(64, (3, 3), activation='relu'))
-    model.add(ZeroPadding2D((1,1)))
-    model.add(Conv2D(64, (3, 3), activation='relu'))
-    model.add(MaxPooling2D((2,2), strides=(2,2)))
-
-    model.add(ZeroPadding2D((1,1)))
-    model.add(Conv2D(128, (3, 3), activation='relu'))
-    model.add(ZeroPadding2D((1,1)))
-    model.add(Conv2D(128, (3, 3), activation='relu'))
-    model.add(MaxPooling2D((2,2), strides=(2,2)))
-
-    model.add(ZeroPadding2D((1,1)))
-    model.add(Conv2D(256, (3, 3), activation='relu'))
-    model.add(ZeroPadding2D((1,1)))
-    model.add(Conv2D(256, (3, 3), activation='relu'))
-    model.add(ZeroPadding2D((1,1)))
-    model.add(Conv2D(256, (3, 3), activation='relu'))
-    model.add(MaxPooling2D((2,2), strides=(2,2)))
-
-    model.add(ZeroPadding2D((1,1)))
-    model.add(Conv2D(512, (3, 3), activation='relu'))
-    model.add(ZeroPadding2D((1,1)))
-    model.add(Conv2D(512, (3, 3), activation='relu'))
-    model.add(ZeroPadding2D((1,1)))
-    model.add(Conv2D(512, (3, 3), activation='relu'))
-    model.add(MaxPooling2D((2,2), strides=(2,2)))
-
-    model.add(ZeroPadding2D((1,1)))
-    model.add(Conv2D(512, (3, 3), activation='relu'))
-    model.add(ZeroPadding2D((1,1)))
-    model.add(Conv2D(512, (3, 3), activation='relu'))
-    model.add(ZeroPadding2D((1,1)))
-    model.add(Conv2D(512, (3, 3), activation='relu'))
-    model.add(MaxPooling2D((2,2), strides=(2,2)))
-
-    model.add(Flatten())
-    model.add(Dense(4096, activation='relu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(4096, activation='relu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(1000, activation='softmax'))'''
-########################################################
     model = Sequential()
-    model.add(Conv2D(32, (3, 3), input_shape=(width, height, 3)))
+    #generally, start with the lower level features (2x2 filter) and move to higher level features (5x5 filter)
+    #from 64 to 32, I use a higher stride to downsample instead of using Max Pooling
+        #In my opinion, this gives more precision than just taking a max from a region
+        #while having a similar effect to a pooling layer
+    #The results showed the loss function spiking down at the beginning, plateauing around
+    #6.9 for a few epochs and then another steady drop until it began to approach 0 for the last 10-15 epochs
+    #so somewhat of a downward exponential curve, could probably get away with 30 or so epochs
+    #.9910 final training accuracy
+
+    model.add(Conv2D(64, (2, 2), input_shape=(width, height, 3)))
     model.add(Activation('relu'))
 
-    model.add(ZeroPadding2D((1,1)))
-    model.add(Conv2D(32, (3, 3), activation='relu'))
+    model.add(Conv2D(64, (3, 3), strides = 2))
+    model.add(Activation('relu'))
+
+    model.add(Conv2D(32, (3, 3)))
+    model.add(Activation('relu'))
+
+    model.add(Conv2D(32, (5, 5)))
+    model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
 
-    model.add(ZeroPadding2D((1,1)))
-    model.add(Conv2D(64, (3, 3), activation='relu'))
-    #model.add(MaxPooling2D(pool_size=(2, 2)))
-
-    model.add(ZeroPadding2D((1,1)))
-    model.add(Conv2D(128, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-
-    model.add(ZeroPadding2D((1,1)))
-    model.add(Conv2D(256, (3, 3), activation='relu'))
-
-    model.add(ZeroPadding2D((1,1)))
-    model.add(Conv2D(256, (1, 1), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-
-    model.add(ZeroPadding2D((1,1)))
-    model.add(Conv2D(512, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-
-
+    #Flatten before fully connected layers
     model.add(Flatten())
 
-    model.add(Dense(512, activation='relu'))
+    model.add(Dense(256))
+    model.add(Activation('relu'))
     model.add(Dropout(0.5))
-    model.add(Dense(1, activation='softmax'))
+
+    model.add(Dense(64))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.5))
+
+    model.add(Dense(2, activation='softmax'))
 
     model.compile(loss='binary_crossentropy',
-                  optimizer='adam',
-                  metrics=['accuracy'])
+        optimizer='adam',
+        metrics=['accuracy'])
 
-    trainingData = ImageDataGenerator(rescale=1./100)
-
-    train_generator = trainingData.flow_from_directory(
-        train_data_dir,
-        target_size=(width, height),
+    model.fit(
+        training_images,
+        training_labels,
         batch_size=batch_size,
-        class_mode='binary')
+        epochs=epochs,
+        verbose = 1)
 
-    model.fit_generator(
-        train_generator,
-        steps_per_epoch=nb_train_samples // batch_size,
-        epochs=epochs)
-        #validation_data=validation_generator,
-        #validation_steps=nb_validation_samples // batch_size)
-
-    model.save_weights('first_try.h5')
-    model.save("ian.dnn")
+    model.save(network_name)
 
 if __name__ == "__main__":
     main()
