@@ -202,3 +202,25 @@ Convolutional Neural Networks:
 	- Adagrad:
 		- during optimization, keep a running sum of all squared gradients
 		- during training, keep adding squared gradients to
+
+
+	Final is Cumulative
+	- Will cover mosly stuff past decision trees
+
+	Stuff I need to still cover in my cheat sheet:
+	Clustering
+	- K-means Clustering
+	- Heirarchical Clustering
+
+	Logic and Knowledge Representation
+	- Propositional Logic
+	- Wumpus World
+	- Binding search
+	- Creating a Logical Agent
+	- Knowledge Representation
+	- Higher Order Logic
+
+	Natural Language Processing
+	- Transcribing Spoken Language
+	- Syntactical Analysis
+	- Parsing Sentences with Cocke Younger Kasami

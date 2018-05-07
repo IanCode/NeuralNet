@@ -34,7 +34,7 @@ output_size = 32
 	- [(CONV-RELU)\*N - POOL?]\*M-(FC-RELU)\*K,SOFTMAX
 		- conv-relu layer for some N number of steps followed by a pooling layer
 		- that whole thing repeated some M number of times
-		- followed by fully connected RELU layers some K number of times 
+		- followed by fully connected RELU layers some K number of times
 		- where N is usually up to 5, M is large, 0 <= K <= 2
 		- softmax at the end for class scores
 		- few fully connected layers at the end
@@ -116,14 +116,14 @@ output_size = 32
 - then feed the output of that into traditional layers of a fully connected neural net
 
 ## References
-`Building powerful image classification models using very little data`
-https://blog.keras.io/building-powerful-image-classification-models-using-very-little-data.html
-`Tensorflow Tutorial`
-http://cv-tricks.com/tensorflow-tutorial/training-convolutional-neural-network-for-image-classification/
-`VGG16 model for Keras`
-https://gist.github.com/baraldilorenzo/07d7802847aaad0a35d3
-`Very Deep Convolutional Networks for Large-Scale Image Recognition`
-https://arxiv.org/abs/1409.1556
+Building powerful image classification models using very little data  
+https://blog.keras.io/building-powerful-image-classification-models-using-very-little-data.html  
+Tensorflow Tutorial  
+http://cv-tricks.com/tensorflow-tutorial/training-convolutional-neural-network-for-image-classification/  
+VGG16 model for Keras    
+https://gist.github.com/baraldilorenzo/07d7802847aaad0a35d3    
+Very Deep Convolutional Networks for Large-Scale Image Recognition    
+https://arxiv.org/abs/1409.1556   
 
 ## Data
 https://www.kaggle.com/c/dogs-vs-cats/data

@@ -36,7 +36,7 @@ def main():
     width, height = 100, 100
     x_train = []
     y_train = []
-    #take training directory  and output file name as command line arguments
+    #take training directory and output file name as command line arguments
     cats_and_dogs = sys.argv[1]
     network_name = sys.argv[2]
 
@@ -48,17 +48,11 @@ def main():
             y_train.append((0,1))
             path = os.path.join(dir_path, cats_and_dogs, filename)
             img = cv2.imread(path)
-            '''arr = np.array(img)
-            if len(arr) == 2:
-                np.append(arr, 3)'''
             x_train.append(img)
         elif filename[0] == 'c':
             y_train.append((1,0))
             path = os.path.join(dir_path, cats_and_dogs, filename)
             img = cv2.imread(path)
-            '''arr = np.array(img)
-            if len(arr) == 2:
-                np.append(arr, 3)'''
             x_train.append(img)
 
     training_images = np.array(x_train)
@@ -70,13 +64,11 @@ def main():
     batch_size = height+width
 
     model = Sequential()
-    #from 64 to 32, I use a higher stride to downsample instead of using Max Pooling
-        #In my opinion, this gives more precision than just taking a max from a region
-        #while having a similar effect to a pooling layer
+    #I use a higher stride to downsample instead of using Max Pooling most of the time
     #The results showed the loss function spiking down at the beginning, plateauing around
     #6.9 for a few epochs and then another steady drop until it began to approach 0 for the last 10-15 epochs
     #so somewhat of a downward exponential curve, could probably get away with 30 or so epochs
-    #.9910 final training accuracy
+    #.9904 final training accuracy. Maybe overfitting?
 
     model.add(Conv2D(32, (5, 5), input_shape=(width, height, 3)))
     model.add(Activation('relu'))
